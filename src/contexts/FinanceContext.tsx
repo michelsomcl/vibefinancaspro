@@ -2,6 +2,7 @@ import React, { createContext, useContext, ReactNode, useEffect, useState } from
 import { supabase } from '@/integrations/supabase/client';
 import { Account, Category, ClientSupplier, PayableAccount, ReceivableAccount, Transaction } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface FinanceContextType {
   accounts: Account[];
@@ -43,9 +44,15 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   // Função para buscar dados do Supabase
   const fetchData = async () => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       
@@ -163,6 +170,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   };
 
   const addPayableAccount = async (payable: Omit<PayableAccount, 'id' | 'createdAt'>) => {
+    if (!user) return;
+
     try {
       const { data, error } = await supabase
         .from('payable_accounts')
@@ -179,7 +188,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
           recurrence_count: payable.recurrenceCount,
           is_paid: payable.isPaid,
           paid_date: payable.paidDate?.toISOString().split('T')[0],
-          parent_id: payable.parentId
+          parent_id: payable.parentId,
+          user_id: user.id
         }])
         .select()
         .single();
@@ -292,6 +302,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   };
 
   const addReceivableAccount = async (receivable: Omit<ReceivableAccount, 'id' | 'createdAt'>) => {
+    if (!user) return;
+
     try {
       const { data, error } = await supabase
         .from('receivable_accounts')
@@ -308,7 +320,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
           recurrence_count: receivable.recurrenceCount,
           is_received: receivable.isReceived,
           received_date: receivable.receivedDate?.toISOString().split('T')[0],
-          parent_id: receivable.parentId
+          parent_id: receivable.parentId,
+          user_id: user.id
         }])
         .select()
         .single();
@@ -422,6 +435,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   };
 
   const addTransaction = async (transaction: Omit<Transaction, 'id' | 'createdAt'>) => {
+    if (!user) return;
+
     try {
       const { data, error } = await supabase
         .from('transactions')
@@ -434,7 +449,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
           payment_date: transaction.paymentDate.toISOString().split('T')[0],
           observations: transaction.observations,
           source_type: transaction.sourceType,
-          source_id: transaction.sourceId
+          source_id: transaction.sourceId,
+          user_id: user.id
         }])
         .select()
         .single();
@@ -603,12 +619,15 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   };
 
   const addCategory = async (category: Omit<Category, 'id' | 'createdAt'>) => {
+    if (!user) return;
+
     try {
       const { data, error } = await supabase
         .from('categories')
         .insert([{
           name: category.name,
-          type: category.type
+          type: category.type,
+          user_id: user.id
         }])
         .select()
         .single();
@@ -640,13 +659,16 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   };
 
   const addClientSupplier = async (client: Omit<ClientSupplier, 'id' | 'createdAt'>) => {
+    if (!user) return;
+
     try {
       const { data, error } = await supabase
         .from('clients_suppliers')
         .insert([{
           name: client.name,
           type: client.type,
-          observations: client.observations
+          observations: client.observations,
+          user_id: user.id
         }])
         .select()
         .single();
@@ -795,7 +817,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [user]);
 
   return (
     <FinanceContext.Provider value={{

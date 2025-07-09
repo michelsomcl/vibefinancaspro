@@ -22,6 +22,7 @@ export type Database = {
           initial_balance: number
           name: string
           type: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -30,6 +31,7 @@ export type Database = {
           initial_balance?: number
           name: string
           type: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -38,6 +40,7 @@ export type Database = {
           initial_balance?: number
           name?: string
           type?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -47,18 +50,21 @@ export type Database = {
           id: string
           name: string
           type: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
           id?: string
           name: string
           type: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
           type?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -69,6 +75,7 @@ export type Database = {
           name: string
           observations: string | null
           type: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -76,6 +83,7 @@ export type Database = {
           name: string
           observations?: string | null
           type: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -83,6 +91,7 @@ export type Database = {
           name?: string
           observations?: string | null
           type?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -102,6 +111,7 @@ export type Database = {
           recurrence_count: number | null
           recurrence_type: string | null
           supplier_id: string
+          user_id: string | null
           value: number
         }
         Insert: {
@@ -119,6 +129,7 @@ export type Database = {
           recurrence_count?: number | null
           recurrence_type?: string | null
           supplier_id: string
+          user_id?: string | null
           value: number
         }
         Update: {
@@ -136,6 +147,7 @@ export type Database = {
           recurrence_count?: number | null
           recurrence_type?: string | null
           supplier_id?: string
+          user_id?: string | null
           value?: number
         }
         Relationships: [
@@ -209,6 +221,7 @@ export type Database = {
           received_date: string | null
           recurrence_count: number | null
           recurrence_type: string | null
+          user_id: string | null
           value: number
         }
         Insert: {
@@ -226,6 +239,7 @@ export type Database = {
           received_date?: string | null
           recurrence_count?: number | null
           recurrence_type?: string | null
+          user_id?: string | null
           value: number
         }
         Update: {
@@ -243,6 +257,7 @@ export type Database = {
           received_date?: string | null
           recurrence_count?: number | null
           recurrence_type?: string | null
+          user_id?: string | null
           value?: number
         }
         Relationships: [
@@ -288,6 +303,7 @@ export type Database = {
           source_id: string | null
           source_type: string
           type: string
+          user_id: string | null
           value: number
         }
         Insert: {
@@ -301,6 +317,7 @@ export type Database = {
           source_id?: string | null
           source_type: string
           type: string
+          user_id?: string | null
           value: number
         }
         Update: {
@@ -314,6 +331,7 @@ export type Database = {
           source_id?: string | null
           source_type?: string
           type?: string
+          user_id?: string | null
           value?: number
         }
         Relationships: [
