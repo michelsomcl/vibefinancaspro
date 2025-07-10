@@ -21,19 +21,6 @@ export default function DetailedReportTable({ reportData }: DetailedReportTableP
   const { clientsSuppliers } = useFinance();
 
   const getClientSupplierName = (item: any) => {
-    // Para contas a pagar, usar supplierId
-    if (item.supplierId) {
-      const supplier = clientsSuppliers.find(cs => cs.id === item.supplierId);
-      return supplier?.name || 'N/A';
-    }
-    
-    // Para contas a receber, usar clientId
-    if (item.clientId) {
-      const client = clientsSuppliers.find(cs => cs.id === item.clientId);
-      return client?.name || 'N/A';
-    }
-    
-    // Fallback para outros campos
     if (item.clientSupplierId) {
       const clientSupplier = clientsSuppliers.find(cs => cs.id === item.clientSupplierId);
       return clientSupplier?.name || 'N/A';
@@ -54,28 +41,24 @@ export default function DetailedReportTable({ reportData }: DetailedReportTableP
       return clientSupplier?.name || 'N/A';
     }
     
-    return 'N/A';
+    const clientSupplier = clientsSuppliers.find(cs => 
+      cs.id === item.clientId || cs.id === item.supplierId
+    );
+    return clientSupplier?.name || 'N/A';
   };
 
   const getFormattedDate = (item: any) => {
     let dateToUse = null;
     
-    // Para despesas pagas, priorizar paidDate
-    if (item.paidDate) {
-      dateToUse = item.paidDate;
-    }
-    // Para receitas recebidas, priorizar receivedDate
-    else if (item.receivedDate) {
-      dateToUse = item.receivedDate;
-    }
-    // Para transações, usar paymentDate
-    else if (item.payment_date) {
+    if (item.payment_date) {
       dateToUse = item.payment_date;
     } else if (item.paymentDate) {
       dateToUse = item.paymentDate;
-    }
-    // Fallback para dueDate
-    else if (item.due_date) {
+    } else if (item.paidDate) {
+      dateToUse = item.paidDate;
+    } else if (item.receivedDate) {
+      dateToUse = item.receivedDate;
+    } else if (item.due_date) {
       dateToUse = item.due_date;
     } else if (item.dueDate) {
       dateToUse = item.dueDate;
@@ -93,11 +76,9 @@ export default function DetailedReportTable({ reportData }: DetailedReportTableP
     }
   };
 
-  const sortItemsByDate = (items: any[]) => {
+  const sortItemsByDueDate = (items: any[]) => {
     return [...items].sort((a, b) => {
       const getDateForSort = (item: any) => {
-        if (item.paidDate) return new Date(item.paidDate);
-        if (item.receivedDate) return new Date(item.receivedDate);
         if (item.payment_date) return new Date(item.payment_date);
         if (item.paymentDate) return new Date(item.paymentDate);
         if (item.due_date) return new Date(item.due_date);
@@ -129,7 +110,7 @@ export default function DetailedReportTable({ reportData }: DetailedReportTableP
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sortItemsByDate(category.items).map((item, itemIndex) => (
+              {sortItemsByDueDate(category.items).map((item, itemIndex) => (
                 <TableRow key={itemIndex}>
                   <TableCell>{getClientSupplierName(item)}</TableCell>
                   <TableCell>{getFormattedDate(item)}</TableCell>
