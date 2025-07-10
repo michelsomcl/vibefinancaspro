@@ -24,8 +24,8 @@ export default function Reports() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-tertiary">Relatórios</h1>
+      <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-tertiary">Relatórios</h1>
         <Card>
           <CardContent className="text-center py-8">
             <p className="text-gray-500">Carregando...</p>
@@ -36,15 +36,17 @@ export default function Reports() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-tertiary">Relatórios</h1>
-        <ReportActions
-          onPrint={onPrint}
-          onPrintPdf={onPrintPdf}
-          onSave={onSave}
-          showDetailed={showDetailed}
-        />
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-tertiary">Relatórios</h1>
+        <div className="w-full sm:w-auto">
+          <ReportActions
+            onPrint={onPrint}
+            onPrintPdf={onPrintPdf}
+            onSave={onSave}
+            showDetailed={showDetailed}
+          />
+        </div>
       </div>
 
       <ReportFilters

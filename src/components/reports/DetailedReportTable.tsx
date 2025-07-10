@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useFinance } from "@/contexts/FinanceContext";
 import { formatDate } from "@/utils/tableUtils";
@@ -93,47 +94,80 @@ export default function DetailedReportTable({ reportData }: DetailedReportTableP
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {reportData.data.map((category, categoryIndex) => (
-        <div key={categoryIndex} className="border rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-tertiary mb-4">
+        <div key={categoryIndex} className="border rounded-lg p-2 sm:p-4">
+          <h3 className="text-base sm:text-lg font-semibold text-tertiary mb-4">
             {category.categoryName}
           </h3>
           
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Cliente/Fornecedor</TableHead>
-                <TableHead>Data</TableHead>
-                <TableHead>Observações</TableHead>
-                <TableHead className="text-right">Valor</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sortItemsByDueDate(category.items).map((item, itemIndex) => (
-                <TableRow key={itemIndex}>
-                  <TableCell>{getClientSupplierName(item)}</TableCell>
-                  <TableCell>{getFormattedDate(item)}</TableCell>
-                  <TableCell className="max-w-xs truncate">{item.observations || '-'}</TableCell>
-                  <TableCell className="text-right">{formatCurrency(item.value)}</TableCell>
+          {/* Desktop Table */}
+          <div className="hidden sm:block">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Cliente/Fornecedor</TableHead>
+                  <TableHead>Data</TableHead>
+                  <TableHead>Observações</TableHead>
+                  <TableHead className="text-right">Valor</TableHead>
                 </TableRow>
-              ))}
-              <TableRow className="bg-gray-50 font-semibold">
-                <TableCell colSpan={3}>Subtotal - {category.categoryName}</TableCell>
-                <TableCell className="text-right">{formatCurrency(category.total)}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {sortItemsByDueDate(category.items).map((item, itemIndex) => (
+                  <TableRow key={itemIndex}>
+                    <TableCell>{getClientSupplierName(item)}</TableCell>
+                    <TableCell>{getFormattedDate(item)}</TableCell>
+                    <TableCell className="max-w-xs truncate">{item.observations || '-'}</TableCell>
+                    <TableCell className="text-right">{formatCurrency(item.value)}</TableCell>
+                  </TableRow>
+                ))}
+                <TableRow className="bg-gray-50 font-semibold">
+                  <TableCell colSpan={3}>Subtotal - {category.categoryName}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(category.total)}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Mobile Card Layout */}
+          <div className="sm:hidden space-y-3">
+            {sortItemsByDueDate(category.items).map((item, itemIndex) => (
+              <Card key={itemIndex} className="border-l-4 border-l-primary">
+                <CardContent className="p-3 space-y-2">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <p className="font-medium text-sm">{getClientSupplierName(item)}</p>
+                      <p className="text-xs text-gray-600">{getFormattedDate(item)}</p>
+                    </div>
+                    <p className="font-bold text-primary text-sm">{formatCurrency(item.value)}</p>
+                  </div>
+                  {item.observations && (
+                    <p className="text-xs text-gray-600 truncate">{item.observations}</p>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+            
+            {/* Mobile Subtotal */}
+            <Card className="bg-gray-50">
+              <CardContent className="p-3">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold text-sm">Subtotal - {category.categoryName}</span>
+                  <span className="font-bold text-primary">{formatCurrency(category.total)}</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       ))}
       
       <div className="border-t-2 border-gray-300 pt-4">
-        <div className="bg-primary text-white p-4 rounded-lg">
-          <div className="flex justify-between items-center">
-            <span className="text-lg font-bold">TOTAL GERAL</span>
-            <span className="text-xl font-bold">{formatCurrency(reportData.grandTotal)}</span>
+        <div className="bg-primary text-white p-3 sm:p-4 rounded-lg">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+            <span className="text-base sm:text-lg font-bold">TOTAL GERAL</span>
+            <span className="text-lg sm:text-xl font-bold">{formatCurrency(reportData.grandTotal)}</span>
           </div>
-          <div className="text-sm opacity-90">
+          <div className="text-xs sm:text-sm opacity-90">
             {reportData.data.reduce((sum, cat) => sum + cat.count, 0)} item(s) no total
           </div>
         </div>

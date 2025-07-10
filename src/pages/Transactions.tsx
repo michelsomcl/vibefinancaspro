@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -258,8 +259,8 @@ export default function Transactions() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-tertiary">Lançamentos</h1>
+      <div className="space-y-6 p-4 sm:p-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-tertiary">Lançamentos</h1>
         <Card>
           <CardContent className="text-center py-8">
             <p className="text-gray-500">Carregando...</p>
@@ -270,36 +271,36 @@ export default function Transactions() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-tertiary">Lançamentos</h1>
-        <Button onClick={() => setIsFormOpen(true)} className="flex items-center gap-2">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-tertiary">Lançamentos</h1>
+        <Button onClick={() => setIsFormOpen(true)} className="flex items-center gap-2 w-full sm:w-auto">
           <Plus className="h-4 w-4" />
-          Novo Lançamento
+          <span className="sm:inline">Novo Lançamento</span>
         </Button>
       </div>
 
       {/* Resumo Financeiro */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
-          <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-green-600">
+          <CardContent className="pt-4 sm:pt-6">
+            <div className="text-xl sm:text-2xl font-bold text-green-600">
               {formatCurrency(totalRevenue)}
             </div>
             <p className="text-xs text-muted-foreground">Total de Receitas</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-red-600">
+          <CardContent className="pt-4 sm:pt-6">
+            <div className="text-xl sm:text-2xl font-bold text-red-600">
               {formatCurrency(totalExpense)}
             </div>
             <p className="text-xs text-muted-foreground">Total de Despesas</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6">
-            <div className={`text-2xl font-bold ${totalRevenue - totalExpense >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+          <CardContent className="pt-4 sm:pt-6">
+            <div className={`text-xl sm:text-2xl font-bold ${totalRevenue - totalExpense >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {formatCurrency(totalRevenue - totalExpense)}
             </div>
             <p className="text-xs text-muted-foreground">Saldo</p>
@@ -310,19 +311,19 @@ export default function Transactions() {
       {/* Filtros */}
       <Card>
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle className="flex items-center gap-2">
-              <Filter className="h-5 w-5" />
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Filter className="h-4 w-4 sm:h-5 sm:w-5" />
               Filtros
             </CardTitle>
-            <Button variant="outline" size="sm" onClick={clearFilters}>
+            <Button variant="outline" size="sm" onClick={clearFilters} className="w-full sm:w-auto">
               Limpar Filtros
             </Button>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-            <div className="relative">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+            <div className="relative sm:col-span-2 lg:col-span-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Buscar..."
@@ -378,14 +379,14 @@ export default function Transactions() {
       {categorySummary.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Resumo por Categoria</CardTitle>
+            <CardTitle className="text-lg">Resumo por Categoria</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {categorySummary.map((summary, index) => (
-                <div key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                  <span className="font-medium">{summary.name}</span>
-                  <div className="flex gap-4">
+                <div key={index} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 bg-gray-50 rounded gap-2">
+                  <span className="font-medium text-sm sm:text-base">{summary.name}</span>
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-sm">
                     {summary.revenue > 0 && (
                       <span className="text-green-600">
                         +{formatCurrency(summary.revenue)}
@@ -407,83 +408,146 @@ export default function Transactions() {
       {/* Lista de Lançamentos */}
       <Card>
         <CardHeader>
-          <CardTitle>Lista de Lançamentos ({filteredTransactions.length})</CardTitle>
+          <CardTitle className="text-lg">Lista de Lançamentos ({filteredTransactions.length})</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 sm:p-6">
           {filteredTransactions.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500">Nenhum lançamento encontrado</p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Cliente/Fornecedor</TableHead>
-                  <TableHead>Categoria</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead>Data</TableHead>
-                  <TableHead>Origem</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredTransactions.map((transaction) => (
-                  <TableRow key={transaction.id}>
-                    <TableCell>
-                      <Badge variant={transaction.type === 'receita' ? 'default' : 'destructive'}>
-                        {transaction.type === 'receita' ? 'Receita' : 'Despesa'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {getClientSupplierName(transaction.clientSupplierId)}
-                    </TableCell>
-                    <TableCell>{getCategoryName(transaction.categoryId)}</TableCell>
-                    <TableCell className={transaction.type === 'receita' ? 'text-green-600' : 'text-red-600'}>
-                      {transaction.type === 'receita' ? '+' : '-'}{formatCurrency(transaction.value)}
-                    </TableCell>
-                    <TableCell>
-                      {formatDate(transaction.paymentDate)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
+            <div className="hidden sm:block">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Tipo</TableHead>
+                    <TableHead>Cliente/Fornecedor</TableHead>
+                    <TableHead>Categoria</TableHead>
+                    <TableHead>Valor</TableHead>
+                    <TableHead>Data</TableHead>
+                    <TableHead>Origem</TableHead>
+                    <TableHead>Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredTransactions.map((transaction) => (
+                    <TableRow key={transaction.id}>
+                      <TableCell>
+                        <Badge variant={transaction.type === 'receita' ? 'default' : 'destructive'}>
+                          {transaction.type === 'receita' ? 'Receita' : 'Despesa'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {getClientSupplierName(transaction.clientSupplierId)}
+                      </TableCell>
+                      <TableCell>{getCategoryName(transaction.categoryId)}</TableCell>
+                      <TableCell className={transaction.type === 'receita' ? 'text-green-600' : 'text-red-600'}>
+                        {transaction.type === 'receita' ? '+' : '-'}{formatCurrency(transaction.value)}
+                      </TableCell>
+                      <TableCell>
+                        {formatDate(transaction.paymentDate)}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">
+                          {transaction.sourceType === 'manual' && 'Manual'}
+                          {transaction.sourceType === 'payable' && 'Conta a Pagar'}
+                          {transaction.sourceType === 'receivable' && 'Conta a Receber'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEdit(transaction)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDelete(transaction.id)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+          
+          {/* Mobile Card Layout */}
+          <div className="sm:hidden space-y-4 p-4">
+            {filteredTransactions.map((transaction) => (
+              <Card key={transaction.id} className="border-l-4 border-l-primary">
+                <CardContent className="p-4 space-y-3">
+                  <div className="flex justify-between items-start">
+                    <Badge variant={transaction.type === 'receita' ? 'default' : 'destructive'} className="text-xs">
+                      {transaction.type === 'receita' ? 'Receita' : 'Despesa'}
+                    </Badge>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEdit(transaction)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDelete(transaction.id)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div>
+                      <p className="text-sm text-gray-600">Cliente/Fornecedor:</p>
+                      <p className="font-medium text-sm">{getClientSupplierName(transaction.clientSupplierId)}</p>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-600">Categoria:</p>
+                        <p className="text-sm">{getCategoryName(transaction.categoryId)}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Data:</p>
+                        <p className="text-sm">{formatDate(transaction.paymentDate)}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center pt-2 border-t">
+                      <Badge variant="outline" className="text-xs">
                         {transaction.sourceType === 'manual' && 'Manual'}
                         {transaction.sourceType === 'payable' && 'Conta a Pagar'}
                         {transaction.sourceType === 'receivable' && 'Conta a Receber'}
                       </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEdit(transaction)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDelete(transaction.id)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+                      <p className={`font-bold text-lg ${transaction.type === 'receita' ? 'text-green-600' : 'text-red-600'}`}>
+                        {transaction.type === 'receita' ? '+' : '-'}{formatCurrency(transaction.value)}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </CardContent>
       </Card>
 
       {/* Dialog do Formulário */}
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto mx-4">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-lg">
               {editingTransaction ? 'Editar' : 'Novo'} Lançamento
             </DialogTitle>
           </DialogHeader>

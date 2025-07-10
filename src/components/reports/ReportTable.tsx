@@ -21,7 +21,7 @@ interface ReportTableProps {
 
 export default function ReportTable({ reportData, showDetailed = false }: ReportTableProps) {
   return (
-    <div className="p-6">
+    <div className="p-3 sm:p-6">
       <ReportTableHeader 
         title={reportData.title}
         period={reportData.period}
@@ -30,7 +30,7 @@ export default function ReportTable({ reportData, showDetailed = false }: Report
 
       {reportData.data.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-gray-500">Nenhum dado encontrado para o período selecionado</p>
+          <p className="text-gray-500 text-sm sm:text-base">Nenhum dado encontrado para o período selecionado</p>
         </div>
       ) : (
         <>
