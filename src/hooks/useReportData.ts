@@ -25,8 +25,8 @@ export const useReportData = ({ activeReport, dateRange }: UseReportDataProps) =
         title = 'Despesas a Pagar por Categoria';
         break;
       case 'paid-expenses':
-        // Para despesas pagas: usar TODOS os lançamentos de despesa do período
-        data = transactions.filter(t => t.type === 'despesa');
+        // Para despesas pagas: usar contas a pagar que foram pagas
+        data = payableAccounts.filter(p => p.isPaid && p.paidDate);
         categoriesData = expenseCategories;
         title = 'Despesas Pagas por Categoria';
         break;
@@ -36,8 +36,8 @@ export const useReportData = ({ activeReport, dateRange }: UseReportDataProps) =
         title = 'Receitas a Receber por Categoria';
         break;
       case 'received-revenues':
-        // Para receitas recebidas: usar TODOS os lançamentos de receita do período
-        data = transactions.filter(t => t.type === 'receita');
+        // Para receitas recebidas: usar contas a receber que foram recebidas
+        data = receivableAccounts.filter(r => r.isReceived && r.receivedDate);
         categoriesData = revenueCategories;
         title = 'Receitas Recebidas por Categoria';
         break;
@@ -48,13 +48,12 @@ export const useReportData = ({ activeReport, dateRange }: UseReportDataProps) =
       data = data.filter(item => {
         let dateToCheck: Date;
         
-        if (activeReport === 'paid-expenses' || activeReport === 'received-revenues') {
-          // Para transações, usar paymentDate
-          if (item.paymentDate) {
-            dateToCheck = new Date(item.paymentDate);
-          } else {
-            dateToCheck = new Date(item.dueDate);
-          }
+        if (activeReport === 'paid-expenses') {
+          // Para despesas pagas, usar paidDate (data em que foi paga)
+          dateToCheck = new Date(item.paidDate);
+        } else if (activeReport === 'received-revenues') {
+          // Para receitas recebidas, usar receivedDate (data em que foi recebida)
+          dateToCheck = new Date(item.receivedDate);
         } else {
           // Para contas não pagas/recebidas, usar dueDate
           dateToCheck = new Date(item.dueDate);
@@ -69,11 +68,6 @@ export const useReportData = ({ activeReport, dateRange }: UseReportDataProps) =
     // Agrupar por categoria
     const groupedData = categoriesData.map(category => {
       const categoryItems = data.filter(item => {
-        // Para transações, usar categoryId
-        if (item.categoryId) {
-          return item.categoryId === category.id;
-        }
-        // Para contas a pagar/receber, também usar categoryId
         return item.categoryId === category.id;
       });
       
@@ -97,7 +91,7 @@ export const useReportData = ({ activeReport, dateRange }: UseReportDataProps) =
         ? `${dateRange.from.toLocaleDateString('pt-BR')} - ${dateRange.to.toLocaleDateString('pt-BR')}`
         : 'Total Acumulado'
     };
-  }, [activeReport, payableAccounts, receivableAccounts, transactions, expenseCategories, revenueCategories, dateRange]);
+  }, [activeReport, payableAccounts, receivableAccounts, expenseCategories, revenueCategories, dateRange]);
 
   return reportData;
 };
