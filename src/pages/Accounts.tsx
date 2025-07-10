@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,9 +10,11 @@ import { Plus, Edit, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Accounts() {
   const { accounts, setAccounts } = useFinance();
+  const { user } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
   const [formData, setFormData] = useState({
@@ -38,6 +39,15 @@ export default function Accounts() {
       toast({
         title: "Erro",
         description: "Preencha todos os campos obrigatórios",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Erro",
+        description: "Usuário não autenticado",
         variant: "destructive"
       });
       return;
@@ -84,6 +94,7 @@ export default function Accounts() {
             type: formData.type,
             initial_balance: formData.initialBalance,
             current_balance: formData.initialBalance,
+            user_id: user.id
           })
           .select()
           .single();
