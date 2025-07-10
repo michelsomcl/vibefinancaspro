@@ -50,17 +50,36 @@ export const useReportData = ({ activeReport, dateRange }: UseReportDataProps) =
         
         if (activeReport === 'paid-expenses') {
           // Para despesas pagas, usar paidDate (data em que foi paga)
-          dateToCheck = new Date(item.paidDate);
+          const paidDateStr = item.paidDate;
+          if (!paidDateStr) return false;
+          
+          // Converter string da data para Date considerando fuso horário local
+          const parts = paidDateStr.split('-').map(Number);
+          dateToCheck = new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0);
         } else if (activeReport === 'received-revenues') {
           // Para receitas recebidas, usar receivedDate (data em que foi recebida)
-          dateToCheck = new Date(item.receivedDate);
+          const receivedDateStr = item.receivedDate;
+          if (!receivedDateStr) return false;
+          
+          // Converter string da data para Date considerando fuso horário local
+          const parts = receivedDateStr.split('-').map(Number);
+          dateToCheck = new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0);
         } else {
           // Para contas não pagas/recebidas, usar dueDate
-          dateToCheck = new Date(item.dueDate);
+          const dueDateStr = item.dueDate;
+          if (!dueDateStr) return false;
+          
+          // Converter string da data para Date considerando fuso horário local
+          const parts = dueDateStr.split('-').map(Number);
+          dateToCheck = new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0);
         }
 
-        if (dateRange.from && dateToCheck < dateRange.from) return false;
-        if (dateRange.to && dateToCheck > dateRange.to) return false;
+        // Normalizar as datas de filtro para comparação
+        const fromDate = dateRange.from ? new Date(dateRange.from.getFullYear(), dateRange.from.getMonth(), dateRange.from.getDate(), 12, 0, 0) : null;
+        const toDate = dateRange.to ? new Date(dateRange.to.getFullYear(), dateRange.to.getMonth(), dateRange.to.getDate(), 12, 0, 0) : null;
+
+        if (fromDate && dateToCheck < fromDate) return false;
+        if (toDate && dateToCheck > toDate) return false;
         return true;
       });
     }

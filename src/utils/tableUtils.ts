@@ -22,11 +22,15 @@ export const formatDate = (date: Date | string) => {
   const month = parts[1] - 1;
   const day = parts[2];
   
-  const dateObj = new Date(year, month, day);
+  // Criar a data considerando o fuso horário local (America/Sao_Paulo)
+  // Usar 12:00 para evitar problemas de fuso horário
+  const dateObj = new Date(year, month, day, 12, 0, 0);
   
   return format(dateObj, 'dd/MM/yyyy', { locale: ptBR });
 };
 
 export const formatDatePayables = (date: Date) => {
-  return format(new Date(date.getTime() + date.getTimezoneOffset() * 60000), 'dd/MM/yyyy', { locale: ptBR });
+  // Criar uma nova data com horário fixo para evitar problemas de fuso horário
+  const adjustedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0);
+  return format(adjustedDate, 'dd/MM/yyyy', { locale: ptBR });
 };
